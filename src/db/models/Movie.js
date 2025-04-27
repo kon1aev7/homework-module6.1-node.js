@@ -29,6 +29,11 @@ const movieSchema = new Schema(
       min: minReleaseYear,
       required: true,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true },
 );

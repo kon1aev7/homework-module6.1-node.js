@@ -18,6 +18,7 @@ export const getMoviesController = async (req, res) => {
   const paginationParams = parsePaginationParams(req.query);
   const sortParams = parseSortParams(req.query, movieSortFields);
   const filters = parseMovieFilterParams(req.query);
+  filters.userId = req.user._id;
   const data = await getMovies({ ...paginationParams, ...sortParams, filters });
 
   res.json({
@@ -50,7 +51,9 @@ export const getMoviesByIdController = async (req, res) => {
   });
 };
 export const addMovieController = async (req, res) => {
-  const data = await addMovie(req.body);
+  const { _id: userId } = req.user;
+  const data = await addMovie({ ...req.body, userId });
+
   res.status(201).json({
     status: 201,
     message: 'Successfully add movie',

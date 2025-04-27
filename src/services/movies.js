@@ -14,6 +14,10 @@ export const getMovies = async ({
   const skip = (page - 1) * perPage;
   const movieQuery = MovieCollection.find();
 
+  if (filters.userId) {
+    movieQuery.where('userId').equals(filters.userId);
+  }
+
   if (filters.type) {
     movieQuery.where('type').equals(filters.type);
   }
@@ -25,14 +29,14 @@ export const getMovies = async ({
   if (filters.maxReleaseYear) {
     movieQuery.where('releaseYear').lte(filters.maxReleaseYear);
   }
+  const totalItems = await MovieCollection.find()
+    .merge(movieQuery)
+    .countDocuments();
 
   const items = await movieQuery
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
-  const totalItems = await MovieCollection.find()
-    .merge(movieQuery)
-    .countDocuments();
 
   const paginationData = calcPaginationData({ page, perPage, totalItems });
   return {
